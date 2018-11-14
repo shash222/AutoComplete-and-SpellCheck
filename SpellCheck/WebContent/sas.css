@@ -1,0 +1,42 @@
+body {
+ background-color: #000000;
+ color: #FFFFFF;
+}
+h1 {
+ color: #cc0033;
+ text-align: center;
+ font: italic 500% fantasy;
+}
+p {
+ background-color: #cc0033;
+ color:  #000000;
+ text-align: center;
+ border: 3px groove #33000d;
+ font: 130% fantasy;
+}
+#img1 {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+span {
+ color: #cc0033;
+ text-align: center;
+ font: italic 20% fantasy;
+}
+#topnav{
+	margin-left:85%;
+}
+button{
+	background-color:#cc0033;
+	border:1px groove #33000d;
+}
+input
+{
+	background-color: #cc0033;
+	border:1px #33000d;
+}
+
+
+#cc0033 //Scarlet Red
+##000000 //black
