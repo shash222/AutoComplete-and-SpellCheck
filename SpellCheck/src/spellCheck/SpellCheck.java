@@ -3,21 +3,22 @@ import java.io.*;
 import java.util.*;
 
 public class SpellCheck {
+	static PrintWriter writer=SpellCheckDriver.getWriter();
 	
-	public static boolean isCorrect(String word, List<String> correct) { 
+	public static boolean isCorrect(String word, List<String> correct) {
 		if (correct==null) {
 			return false;
 		}
 		//Word = word with first letter capital
 		String Word=Character.toLowerCase(word.charAt(0))+word.substring(1);
 		if (correct.contains(word)||correct.contains(Word)) {
-			System.out.println("			Correct");
+			writer.println("			Correct");
 			return true;
 		}
 		//checks if the test word is in all caps and matches a word in the list of correct words
 		for (String s:correct) {
 			if ((word.equals(word.toUpperCase())&&word.equalsIgnoreCase(s))) {
-				System.out.println("			Correct");
+				writer.println("			Correct");
 				return true;
 			}
 		}
@@ -28,13 +29,13 @@ public class SpellCheck {
 		//checks if word is possible acronym
 		//different from purpose of for loop above because this is only if the test word does not match any word on the correct list but is all caps
 		if (word.equals(word.toUpperCase())) {
-			System.out.println("			Possible Acronym");
+			writer.println("			Possible Acronym");
 			return true;
 		}
 		for (int i=0;i<word.length();i++) {
 			//checks if word contains non-alphabet characters
 			if (word.charAt(i)<65||(word.charAt(i)>90&&word.charAt(i)<97)||word.charAt(i)>122) {
-				System.out.println("			Special Case");
+				writer.println("			Special Case");
 				return true;
 			}
 		}
@@ -193,89 +194,114 @@ public class SpellCheck {
 		if (list.size()==0) {
 			return;
 		}
-		System.out.print("			"+correction+": ");
+		writer.print("			"+correction+": ");
 		for (int i=0;i<list.size();i++) {
-			System.out.print(list.get(i));
+			writer.print(list.get(i));
 			if (i<list.size()-1) {
-				System.out.print(", ");
+				writer.print(", ");
 			}
 		}
-		System.out.println();
+		writer.println();
 	}
 	
-	public static SCNode createLists(Scanner in,File file,int length) {
+	public static List<String> createLists(File file) throws FileNotFoundException {
 		//Returns list of correct and test words (each called separately)
-		String[] wordArr=new String[length];
-		for (int i=0;i<length;i++) {
-			wordArr[i]=in.nextLine();
+		Scanner in=new Scanner(file);
+		List<String> words=new ArrayList<>();
+		while (in.hasNextLine()) {
+			words.add(in.nextLine());
 		}
-		SCNode node=new SCNode(wordArr,null,in) ;
-		return node;
+		return words;
 	}
 	
-	public static void spellCheck(String[] correctWords, String[] checkWords) {
+	public static void spellCheck(List<String> correctWords, String word) {
 		//Stores correct words in hashmap for O(1) access
 		HashMap<Integer,List<String>> map=new HashMap<>();
-		String word;
-		List<String> list=new ArrayList<>();
-		boolean noSuggestion;
-		for (int i=0;i<correctWords.length;i++) {
-			if (map.get(correctWords[i].length())==null) {
-				map.put(correctWords[i].length(),new ArrayList<>());
+		boolean noSuggestion=false;
+		for (int i=0;i<correctWords.size();i++) {
+			if (map.get(correctWords.get(i).length())==null) {
+				map.put(correctWords.get(i).length(),new ArrayList<>());
 			}
-			map.get(correctWords[i].length()).add(correctWords[i]);
+			map.get(correctWords.get(i).length()).add(correctWords.get(i));
 		}
-		for (int i=0;i<checkWords.length;i++) {
-			noSuggestion=false;
-			word=checkWords[i];
-			System.out.println("		"+word);
-			if (!isCorrect(word,map.get(word.length()))&&!isSpecial(word)) {
-				//as long as not a single correction was found, alerts that no suggestions were found
-				if (
-					!isOmitted(word,map.get(word.length()+1))     &
-					!isInserted(word,map.get(word.length()-1))    &
-					!isTransposed(word,map.get(word.length()))    &
-					!isSubstituted(word,map.get(word.length()))   &
-					!isCapital(word,map.get(word.length())))
-				{
-					noSuggestion=true;
-				}
+		if (!isCorrect(word,map.get(word.length()))&&!isSpecial(word)) {
+			//as long as not a single correction was found, alerts that no suggestions were found
+			if (
+				!isOmitted(word,map.get(word.length()+1))     &
+				!isInserted(word,map.get(word.length()-1))    &
+				!isTransposed(word,map.get(word.length()))    &
+				!isSubstituted(word,map.get(word.length()))   &
+				!isCapital(word,map.get(word.length())))
+			{
+				noSuggestion=true;
 			}
-			if (noSuggestion) {
-				System.out.println("			No suggestions");
-			}
-			System.out.println();
 		}
+		if (noSuggestion) {
+			writer.println("			No suggestions");
+		}
+		writer.println();
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException{
-
-		File file=new File("test3.txt");
-		Scanner in=new Scanner(file);
-		int dataSets=Integer.parseInt(in.nextLine());
-		int words;
-		//The Linked List will never have more than 2 non-null nodes
-		SCNode head;//Spell Check Node that stores linked List of data
-		String[] correctWords;
-		String[] checkWords;
-		for (int i=0;i<dataSets;i++) {
-			System.out.println("Dataset "+(i+1)+": ");
-			//number of correct words in set
-			words=Integer.parseInt(in.nextLine());
-			System.out.println("	Correct Words: "+words);
-			head=createLists(in,file,words);
-			in=head.getScanner();
-			correctWords=head.getData();
-
-			//number of words to be checked
-			words=Integer.parseInt(in.nextLine());
-			System.out.println("	Test Words: "+words);
-			head.next=createLists(in,file,words);
-			in=head.next.getScanner();
-			checkWords=head.next.getData();
-			
-			//Up Until this post, accesses and records data correctly
-			spellCheck(correctWords,checkWords);
-		}
+	public static void start(String word) throws FileNotFoundException{
+		File file=new File("C:\\Users\\sman0\\git\\AutoComplete-and-SpellCheck\\SpellCheck\\trieTest.txt");
+		List<String> words=createLists(file);
+		spellCheck(words,word);
 	}
+
 }
+
+
+/*
+ * Index page loads
+ * User enters word into search bar
+ * User hits enter
+ * SpellCheckDriver page opens
+ * SpellCheckDriver page requests for inputed word (get not post, don't need to hide data)
+ * Driver page calls start function in spellcheck and sends word that was entered
+ * word is checked across all methods and printed to page
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * */
+
+
+
+
+
+
+
+
+
+
+
+

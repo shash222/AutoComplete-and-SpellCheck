@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/SpellCheckDriver")
 public class SpellCheckDriver extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	private static PrintWriter write;
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -23,14 +24,20 @@ public class SpellCheckDriver extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    
+    public static PrintWriter getWriter() {
+    	return write;
+    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
-		PrintWriter write=response.getWriter();
+		String word = request.getParameter("search");
+		write=response.getWriter();
+		write.println(SiteFormat.getFormat());
+		SpellCheck.start(word);
 	}
 
 	/**
@@ -40,5 +47,5 @@ public class SpellCheckDriver extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-
+	
 }

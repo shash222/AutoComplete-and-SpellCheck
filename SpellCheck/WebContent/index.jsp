@@ -9,7 +9,7 @@
 	<body>
 		<h1>SAS Dictionary<span>Sponsored by Rutgers MSA</span></h1>
 		<div id="topnav">
-			<form action="SpellCheckDriver" method="post">
+			<form action="SpellCheckDriver" method="get">
 			  <input type="text" placeholder="Search..." name="search">
 			  <button type="submit">Submit</button>
 			</form>
