@@ -62,33 +62,6 @@ public class TrieDriver extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out=response.getWriter();
 		out.write(json);
-//		System.out.println(json);
-	//	System.out.println();
-/*		System.out.println(entry);
-		if (words!=null) {
-			for (int i=0;i<words.size();i++) {
-				System.out.println(words.get(i));
-			}
-			System.out.println();
-		}*/
 	}
 	
-/*	public static void main(String[] args) throws FileNotFoundException {
-		trie=new Trie();
-		File file=new File("C:\\Users\\sman0\\git\\AutoComplete-and-SpellCheck\\SpellCheck\\trieTest.txt");
-		Scanner in=new Scanner(file);
-		String str;
-		while(in.hasNextLine()) {
-			str=in.nextLine();
-			trie.add(str);
-		}
-		in.close();
-
-		
-		List<String> list=trie.getWords("c");
-		for (int i=0;i<list.size();i++) {
-			System.out.println(list.get(i));
-		}
-		System.out.println();
-	}*/
 }
